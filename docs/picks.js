@@ -153,7 +153,7 @@ window.KIT = {
     { id: "taxkit", cat: "money", name: "Sole Trader Tax Kit",
       what: "A bookkeeping spreadsheet and a weekend guide that get your self-employed tax return done.",
       why: "I made this one. Log your jobs and costs, and it hands you the figures for your Self Assessment, mileage and CIS included.",
-      price: "One-off", band: "cheap", fits: ["trading", "building"],
+      price: "One-off", band: "cheap", fits: ["trading", "building", "browsing"],
       url: "https://whop.com/checkout/plan_eLqvpxyD5GPxl" },
 
     { id: "budget", cat: "money", name: "YNAB",

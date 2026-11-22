@@ -6,7 +6,7 @@
 set -e
 cd "$(dirname "$0")"
 SRC=../scrollcraft/builds/stillwater
-for f in index.html page.js picks.js ground.js scrollcraft.js scrollcraft.css site.css; do
+for f in index.html page.js picks.js ground.js scrollcraft.js scrollcraft.css site.css og-image.png; do
   cp "$SRC/$f" "docs/$f"
 done
 touch docs/.nojekyll
