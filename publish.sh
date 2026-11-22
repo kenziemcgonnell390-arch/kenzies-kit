@@ -12,6 +12,6 @@ done
 touch docs/.nojekyll
 git add -A docs publish.sh
 if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
-git commit -q -m "Update Kenzie's Kit from stillwater build"
+git commit -q -m "Update Kenzie's Kit from stillwater build" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 git push -q
 echo "Pushed. Live in a minute at https://kenziemcgonnell390-arch.github.io/kenzies-kit/"
