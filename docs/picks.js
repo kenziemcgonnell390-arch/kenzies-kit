@@ -49,7 +49,7 @@ window.KIT = {
     /* The short form of the disclosure, shown beside the first button. */
     disclosureShort: "Every link here is an affiliate link or something I made. Either way I earn from it, at no extra cost to you.",
     /* Required by law in the UK and most other places. Keep it visible. */
-    disclosure: "Every link on this page is an affiliate link, apart from the Sole Trader Tax Kit, which I made and sell myself. If you buy through one, I earn from it at no extra cost to you. It is how the page pays for itself, and it is why the list is short: I only put my name to things I would buy again.",
+    disclosure: "Every link on this page is an affiliate link, apart from the Sole Trader Tax Kit, which I made and sell myself. If you buy through one, I earn from it at no extra cost to you. It is how the page pays for itself. It doesn't decide what gets listed: each pick is here because it's worth the money.",
     contact: "kenziemcgonnell390@gmail.com",
     reviewed: "September 2026"
   },
@@ -73,19 +73,17 @@ window.KIT = {
   categories: [
     { id: "trading",  name: "Trading",       line: "Charting, journalling, and the boring parts that decide whether the rest works." },
     { id: "study",    name: "Study",         line: "Getting through a semester without losing the notes you made in week two." },
-    { id: "software", name: "Software & AI", line: "The subscriptions running in the background of most of my day." },
+    { id: "software", name: "Software & AI", line: "The subscriptions worth having running in the background of your day." },
     { id: "money",    name: "Money",         line: "Where the money sits when it is not in a trade." },
     { id: "side",     name: "Side income",   line: "The stack behind anything you sell on the internet." },
     { id: "desk",     name: "Desk & gear",   line: "Physical objects. Bought once, used every day, replaced rarely." }
   ],
 
-  /* DRAFT NAMES, 2026-11-11. Seventeen picks below were given a product name
-     as a suggestion for you to react to: journal, propfirm, newsfeed, vpn,
-     passwords, backup, cashback, tax, hosting, sitebuilder, email, print,
-     monitor, chair, keyboard, headphones, lamp. The page says "everything
-     here is something I pay for myself", so swap any you do not actually use
-     for the one you do, then delete this note. There is no investing account
-     on the page on purpose: see the note in the README. */
+  /* VOICE RULE. Recommending is fine ("What I'd pick"); claiming personal
+     use is only allowed for products Kenzie actually uses. Picks are written
+     as why each one is worth paying for. If you use one, you can make its
+     line personal. There is no investing account on the page on purpose:
+     see the note in the README. */
   picks: [
     /* ---------------------------------------------------------- trading -- */
     { id: "tradingview", cat: "trading", name: "TradingView",
@@ -95,7 +93,7 @@ window.KIT = {
 
     { id: "journal", cat: "trading", name: "TradeZella",
       what: "Software that logs every trade and shows you what your edge actually is.",
-      why: "The first thing that told me which setup was carrying my account and which one was quietly costing me.",
+      why: "Shows you which setups are carrying your account and which ones are quietly costing you.",
       price: "Subscription", band: "mid", fits: ["trading"], url: "" },
 
     { id: "propfirm", cat: "trading", name: "FTMO Challenge",
@@ -116,7 +114,7 @@ window.KIT = {
 
     { id: "grammarly", cat: "study", name: "Grammarly Premium",
       what: "Checks tone, clarity and structure, not just spelling.",
-      why: "The rewrite suggestions are the part worth paying for. It has caught things in my essays a proofread did not.",
+      why: "The rewrite suggestions are the part worth paying for. They catch things a quick proofread misses.",
       price: "Subscription", band: "cheap", fits: ["student", "building"], url: "" },
 
     { id: "notion", cat: "study", name: "Notion Plus",
@@ -197,7 +195,7 @@ window.KIT = {
     /* ------------------------------------------------------------- desk -- */
     { id: "monitor", cat: "desk", name: "Dell P2725H monitor",
       what: "A 27-inch panel with a height-adjustable stand.",
-      why: "The largest single jump in how much I get done. Notes on one side, work on the other.",
+      why: "One of the biggest jumps in how much gets done at a desk. Notes on one side, work on the other.",
       price: "One-off", band: "dear", fits: ["student", "trading", "building"], url: "" },
 
     { id: "chair", cat: "desk", name: "Sihoo Doro C300 chair",
