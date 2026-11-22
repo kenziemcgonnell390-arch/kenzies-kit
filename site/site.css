@@ -1,0 +1,538 @@
+/* ==========================================================================
+   Kenzie's Kit — page styles.
+   scrollcraft.css is the floor and the mechanism; it is never edited.
+   The world (ridges, firs, water, fog) is drawn live in ground.js on #ground.
+
+   Three colours, used in fixed proportion:
+     60%  fog      the ground everything sits on
+     30%  slate    type, rules, chips, the strip: the structure
+     10%  ember    ONLY things a visitor can click to go somewhere
+   If something is ember and it is not a button, it is a bug.
+   ========================================================================== */
+
+/* ------------------------------------------------------------- the brand -- */
+:root {
+  --sc-canvas:      #eaf0f1;   /* fog over a cold lake */
+  --sc-surface:     #ffffff;
+  --sc-ink:         #131c22;   /* slate */
+  --sc-ink-soft:    #4a5b63;
+  --sc-accent:      #c2410c;   /* ember, the one warm thing on a cold page */
+  --sc-accent-ink:  #fffaf6;
+
+  --sc-font-display: "Archivo", system-ui, sans-serif;
+  --sc-font-text:    "Instrument Sans", system-ui, sans-serif;
+
+  /* Radii: one scale, held everywhere. Water and mist want soft, not round. */
+  --sc-r-sm: 6px;  --sc-r-md: 10px;  --sc-r-lg: 16px;
+
+  /* Shadows on a light ground are cool and shallow, or they read as dirt. */
+  --sc-shadow-color: 198 34% 30%;
+  --sc-e1: 0 1px 2px hsl(var(--sc-shadow-color) / 0.08),
+           0 2px 6px -2px hsl(var(--sc-shadow-color) / 0.10);
+  --sc-e2: 0 2px 4px hsl(var(--sc-shadow-color) / 0.08),
+           0 12px 28px -8px hsl(var(--sc-shadow-color) / 0.18);
+  --sc-e3: 0 4px 10px hsl(var(--sc-shadow-color) / 0.10),
+           0 28px 60px -16px hsl(var(--sc-shadow-color) / 0.30);
+  --sc-edge: inset 0 1px 0 hsl(0 0% 100% / 0.9);
+
+  /* Brand-local roles. */
+  --kt-glass:   color-mix(in oklab, #ffffff 78%, transparent);
+  --kt-plate:   color-mix(in oklab, #ffffff 93%, transparent);
+  --kt-hair:    color-mix(in oklab, var(--sc-ink) 11%, transparent);
+  --kt-hair-2:  color-mix(in oklab, var(--sc-ink) 24%, transparent);
+  --kt-ember-deep: #a3360a;
+  --kt-peek: 6rem;             /* how far the kit rides up over the first screen */
+}
+
+body { overflow-x: clip; }
+[hidden] { display: none !important; }
+
+/* The drawn world sits above the body ground and below every box. */
+#ground {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Grain on a light page is a quarter of what a dark page wants. */
+.sc-grain { opacity: 0.022; }
+
+/* Progress is structure, not something to click. */
+[data-sc-progress] { background: var(--sc-ink); opacity: 0.55; }
+
+/* -------------------------------------------------------------- the skip -- */
+.kt-skip {
+  position: fixed; top: 0; left: 0; z-index: 200;
+  transform: translateY(-140%);
+  background: var(--sc-ink); color: var(--sc-canvas);
+  padding: var(--sc-3) var(--sc-5);
+  font-size: var(--sc-t-sm); text-decoration: none;
+  border-radius: 0 0 var(--sc-r-sm) 0;
+  transition: transform var(--sc-d-fast) var(--sc-ease-out);
+}
+.kt-skip:focus-visible { transform: none; }
+
+/* ========================================================= the off switch ==
+   Small, always there. Some people get dizzy; they should not have to hunt.
+   ========================================================================== */
+.kt-motion {
+  position: fixed; top: var(--sc-3); right: var(--sc-gutter);
+  z-index: calc(var(--sc-z-chrome) + 1);
+  display: inline-flex; align-items: center; gap: var(--sc-2);
+  min-height: 2.25rem;
+  padding: var(--sc-1) var(--sc-3);
+  background: var(--kt-glass);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--kt-hair);
+  border-radius: var(--sc-r-pill);
+  font-size: var(--sc-t-xs); color: var(--sc-ink-soft);
+  cursor: pointer;
+  transition: color var(--sc-d-fast) var(--sc-ease-out),
+              border-color var(--sc-d-fast) var(--sc-ease-out);
+}
+.kt-motion__dot {
+  width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: var(--sc-ink);
+  box-shadow: 0 0 0 1px var(--sc-ink);
+}
+.kt-motion[aria-pressed="false"] .kt-motion__dot { background: transparent; }
+@media (hover: hover) and (pointer: fine) {
+  .kt-motion:hover { color: var(--sc-ink); border-color: var(--kt-hair-2); }
+}
+.kt-motion:active { transform: translateY(1px); }
+
+/* ======================================================= chrome: the strip ==
+   Not a wordmark-and-CTA bar. A jump strip that only appears once the reader
+   has left the questions behind, and reports which list they are standing in.
+   ========================================================================== */
+.kt-strip {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: var(--sc-z-chrome);
+  display: flex; align-items: center; gap: var(--sc-5);
+  padding: var(--sc-3) calc(var(--sc-gutter) + 8.5rem) var(--sc-3) var(--sc-gutter);
+  background: color-mix(in oklab, var(--sc-canvas) 86%, transparent);
+  backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom: 1px solid var(--kt-hair);
+  /* Hidden properly while it is away, so the keyboard cannot land on links
+     nobody can see. */
+  opacity: 0; transform: translateY(-100%); visibility: hidden;
+  transition: opacity var(--sc-d-base) var(--sc-ease-out),
+              transform var(--sc-d-base) var(--sc-ease-out),
+              visibility 0s linear var(--sc-d-base);
+}
+.kt-strip.is-up { opacity: 1; transform: none; visibility: visible; transition-delay: 0s; }
+.kt-strip__mark {
+  font-family: var(--sc-font-display); font-weight: 600;
+  font-size: var(--sc-t-sm); letter-spacing: var(--sc-track-snug);
+  white-space: nowrap;
+}
+.kt-strip__list {
+  position: relative;
+  display: flex; gap: var(--sc-1); list-style: none; margin: 0; padding: 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.kt-strip__list::-webkit-scrollbar { display: none; }
+.kt-strip__list a {
+  display: block; white-space: nowrap; text-decoration: none;
+  font-size: var(--sc-t-xs); letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase;
+  color: var(--sc-ink-soft);
+  padding: var(--sc-2) var(--sc-3);
+  border-radius: var(--sc-r-pill);
+  transition: color var(--sc-d-fast) var(--sc-ease-out),
+              background var(--sc-d-fast) var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .kt-strip__list a:hover { color: var(--sc-ink); background: var(--kt-glass); }
+}
+.kt-strip__list a[aria-current="true"] { color: var(--sc-canvas); background: var(--sc-ink); }
+
+/* ============================================================= buttons =====
+   Ember is spent here and nowhere else. The solid button is "go to the thing".
+   Quiet and ink buttons are for everything that is not leaving the page.
+   ========================================================================== */
+.kt-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--sc-2); white-space: nowrap;
+  min-height: 2.75rem;
+  padding: var(--sc-2) var(--sc-5);
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  border: 1px solid transparent; border-radius: var(--sc-r-sm);
+  font-size: var(--sc-t-sm); font-weight: 600; text-decoration: none;
+  cursor: pointer;
+  transition: background var(--sc-d-fast) var(--sc-ease-out),
+              border-color var(--sc-d-fast) var(--sc-ease-out),
+              box-shadow var(--sc-d-fast) var(--sc-ease-out),
+              transform 120ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .kt-btn:hover { background: var(--kt-ember-deep); }
+}
+.kt-btn:active { transform: translateY(1px); }
+.kt-btn[disabled] { opacity: 0.5; cursor: default; }
+
+/* The one button on the first screen. It is the nearest thing to the reader,
+   so it is the only thing on the page with a shadow in its own colour. */
+.kt-btn--lead {
+  min-height: 3.25rem;
+  padding-inline: var(--sc-6);
+  font-size: var(--sc-t-base);
+  box-shadow: 0 1px 2px hsl(18 85% 22% / 0.30),
+              0 10px 22px -8px hsl(18 85% 30% / 0.55),
+              inset 0 1px 0 hsl(24 100% 80% / 0.35);
+}
+@media (hover: hover) and (pointer: fine) {
+  .kt-btn--lead:hover {
+    box-shadow: 0 1px 2px hsl(18 85% 22% / 0.30),
+                0 14px 26px -8px hsl(18 85% 30% / 0.6),
+                inset 0 1px 0 hsl(24 100% 80% / 0.35);
+  }
+}
+
+.kt-btn--quiet {
+  background: transparent; color: var(--sc-ink);
+  border-color: var(--kt-hair-2);
+  font-weight: 500;
+}
+.kt-btn--ink { background: var(--sc-ink); color: var(--sc-canvas); }
+@media (hover: hover) and (pointer: fine) {
+  .kt-btn--quiet:hover { background: var(--kt-glass); border-color: var(--sc-ink); }
+  .kt-btn--ink:hover { background: color-mix(in oklab, var(--sc-ink) 84%, #fff); }
+}
+
+.kt-soon { font-size: var(--sc-t-xs); color: var(--sc-ink-soft); white-space: nowrap; }
+
+.kt-price {
+  font-size: var(--sc-t-xs); letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase; color: var(--sc-ink-soft); white-space: nowrap;
+}
+
+/* =================================================================== hero ==
+   Back: the lake. Middle: the words and the two questions. Front: one button.
+   Nothing here animates in. It is all readable the instant it is on screen.
+   ========================================================================== */
+.kt-hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  padding-block: var(--sc-4) calc(var(--kt-peek) + var(--sc-6));
+}
+.kt-hero__inner { display: flex; flex-direction: column; }
+.kt-mark {
+  margin: 0; min-height: 2.25rem;
+  display: flex; align-items: center;
+  font-family: var(--sc-font-display); font-weight: 600;
+  font-size: var(--sc-t-sm); letter-spacing: var(--sc-track-snug);
+}
+/* Shrink-wrapped, because ground.js composes the range around this box. */
+.kt-hero__copy { margin-top: clamp(2rem, 8vh, 5.5rem); width: fit-content; max-width: 100%; }
+.kt-hero__title {
+  margin: 0; max-width: 13.5em;
+  font-size: clamp(2.4rem, 1.55rem + 3.3vw, 4.4rem);
+  line-height: 1.02;
+}
+.kt-hero__lede { margin: var(--sc-5) 0 0; max-width: 33rem; color: var(--sc-ink-soft); }
+
+/* The two questions sit on glass, so the range can run behind them without
+   ever getting under a word. */
+.kt-ask {
+  margin-top: clamp(1.75rem, 5vh, 3rem);
+  width: 100%; max-width: 37rem;
+  display: grid; gap: var(--sc-5);
+  padding: var(--sc-5);
+  background: var(--kt-glass);
+  backdrop-filter: blur(14px) saturate(1.05);
+  border: 1px solid var(--kt-hair);
+  border-radius: var(--sc-r-lg);
+  box-shadow: var(--sc-e2), var(--sc-edge);
+}
+.kt-ask__group { border: 0; margin: 0; padding: 0; min-width: 0; }
+.kt-ask__group legend {
+  padding: 0; margin-bottom: var(--sc-3);
+  font-size: var(--sc-t-sm); font-weight: 600; color: var(--sc-ink);
+}
+.kt-ask__row { display: flex; flex-wrap: wrap; gap: var(--sc-2); }
+.kt-chip {
+  min-height: 2.5rem;
+  padding: var(--sc-2) var(--sc-4);
+  background: color-mix(in oklab, #ffffff 60%, transparent);
+  border: 1px solid var(--kt-hair-2);
+  border-radius: var(--sc-r-pill);
+  font-size: var(--sc-t-sm); cursor: pointer;
+  transition: background var(--sc-d-fast) var(--sc-ease-out),
+              border-color var(--sc-d-fast) var(--sc-ease-out),
+              color var(--sc-d-fast) var(--sc-ease-out),
+              transform 120ms var(--sc-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .kt-chip:hover { border-color: var(--sc-ink); background: #ffffff; }
+}
+.kt-chip:active { transform: translateY(1px); }
+.kt-chip[aria-pressed="true"] {
+  background: var(--sc-ink); color: var(--sc-canvas); border-color: var(--sc-ink);
+}
+.kt-ask__go {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--sc-3) var(--sc-5);
+  padding-top: var(--sc-1);
+}
+.kt-ask__note {
+  margin: 0; flex: 1 1 14rem; max-width: 22rem;
+  font-size: var(--sc-t-xs); line-height: 1.45; color: var(--sc-ink-soft);
+}
+
+/* ================================================================ the kit ==
+   The result. It rides up over the bottom edge of the first screen, which is
+   what stops the page reading as a stack of boxes, and it is the one surface
+   on the page that is properly lifted.
+   ========================================================================== */
+.kt-kit {
+  position: relative; z-index: 2;
+  padding-bottom: var(--sc-8);
+  scroll-margin-top: 4.75rem;
+}
+.kt-plate {
+  margin-top: calc(-1 * var(--kt-peek));
+  padding: var(--sc-6) clamp(1.25rem, 3.4vw, 3rem) var(--sc-5);
+  background: var(--kt-plate);
+  backdrop-filter: blur(18px) saturate(1.08);
+  border: 1px solid var(--kt-hair);
+  border-radius: var(--sc-r-lg);
+  box-shadow: var(--sc-e3), var(--sc-edge);
+}
+.kt-plate__head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--sc-4) var(--sc-6);
+}
+.kt-plate__head h2 { margin: 0; }
+.kt-plate__status { margin: var(--sc-2) 0 0; color: var(--sc-ink-soft); max-width: 52ch; }
+
+/* Three across, then two, then one. Flex rather than a grid, so a list with
+   five picks fills its last row instead of leaving a hole in it. */
+.kt-plate__list {
+  list-style: none; margin: var(--sc-6) 0 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 0 var(--sc-6);
+}
+.kt-plate__list > li {
+  flex: 1 1 17rem;
+  display: flex; flex-direction: column;
+  padding: var(--sc-4) 0 var(--sc-5);
+  border-top: 1px solid var(--kt-hair-2);
+}
+.kt-plate__cat {
+  font-size: var(--sc-t-xs); letter-spacing: var(--sc-track-wide);
+  text-transform: uppercase; color: var(--sc-ink-soft);
+}
+.kt-plate__name {
+  margin: var(--sc-2) 0 0;
+  font-family: var(--sc-font-display); font-weight: 600;
+  font-size: var(--sc-t-lg); letter-spacing: var(--sc-track-snug); line-height: 1.15;
+}
+.kt-plate__why { margin: var(--sc-2) 0 0; font-size: var(--sc-t-sm); color: var(--sc-ink-soft); max-width: 44ch; }
+.kt-plate__go {
+  margin-top: auto; padding-top: var(--sc-4);
+  display: flex; align-items: center; gap: var(--sc-4);
+}
+.kt-plate__note {
+  margin: var(--sc-2) 0 0; padding-top: var(--sc-4);
+  border-top: 1px solid var(--kt-hair);
+  font-size: var(--sc-t-xs); line-height: 1.5; color: var(--sc-ink-soft); max-width: 88ch;
+}
+
+/* The kit rewrites itself when an answer changes. That is the one moment on
+   the page where something moves to say "this just happened". */
+@keyframes kt-write {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.kt-plate__list.is-writing > li {
+  animation: kt-write 420ms var(--sc-ease-out) both;
+  animation-delay: calc(var(--kt-i, 0) * 55ms);
+}
+
+/* ============================================================== the rules ==*/
+.kt-rules { padding-block: var(--sc-6) var(--sc-7); }
+.kt-rules h2 { margin: 0 0 var(--sc-5); }
+.kt-rules__grid {
+  display: grid; gap: var(--sc-5) var(--sc-8);
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  max-width: 62rem;
+}
+.kt-rules__grid p { max-width: 40ch; }
+.kt-note {
+  margin-top: var(--sc-6);
+  padding-top: var(--sc-4);
+  border-top: 1px solid var(--kt-hair-2);
+  max-width: 46rem;
+  display: grid; gap: var(--sc-2);
+}
+.kt-note .sc-label { color: var(--sc-ink); }
+#rules-disclosure { color: var(--sc-ink); max-width: 62ch; }
+
+/* ============================================================== the lists ==
+   One shape for all six. The heading holds its place while its picks pass,
+   and the pick that suits the answers leads on a raised card with the only
+   ember button in the list. Everything else is type on a hairline.
+   ========================================================================== */
+.kt-cat { padding-block: var(--sc-8) var(--sc-6); }
+.kt-cat__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.7fr);
+  gap: var(--sc-6) clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+.kt-cat__head { position: sticky; top: 5.25rem; }
+.kt-cat__title {
+  margin: 0 0 var(--sc-4);
+  font-size: var(--sc-t-2xl); letter-spacing: var(--sc-track-snug); line-height: 1.04;
+  scroll-margin-top: 5.25rem;
+}
+.kt-cat__head .sc-body { max-width: 34ch; }
+.kt-cat__tip {
+  margin: var(--sc-5) 0 0; padding-top: var(--sc-4);
+  border-top: 1px solid var(--kt-hair-2);
+  max-width: 34ch;
+  font-size: var(--sc-t-sm); color: var(--sc-ink);
+}
+
+.kt-list { list-style: none; margin: 0; padding: 0; }
+.kt-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sc-3) var(--sc-6);
+  align-items: center;
+  padding: var(--sc-5);
+  border-top: 1px solid var(--kt-hair-2);
+  transition: opacity var(--sc-d-slow) var(--sc-ease-out);
+}
+.kt-item__top { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--sc-1) var(--sc-4); }
+.kt-item__name {
+  margin: 0;
+  font-family: var(--sc-font-display); font-weight: 600;
+  font-size: var(--sc-t-lg); letter-spacing: var(--sc-track-snug); line-height: 1.15;
+}
+.kt-item__what { margin: var(--sc-2) 0 0; max-width: 54ch; }
+.kt-item__why { margin: var(--sc-1) 0 0; max-width: 60ch; font-size: var(--sc-t-sm); color: var(--sc-ink-soft); }
+.kt-item__flag { display: none; }
+
+/* Not the lead: the link is still there, it just does not shout. */
+.kt-item:not(.is-best) .kt-btn {
+  background: transparent; color: var(--sc-ink);
+  border-color: var(--kt-hair-2); font-weight: 500;
+}
+@media (hover: hover) and (pointer: fine) {
+  .kt-item:not(.is-best) .kt-btn:hover { background: var(--sc-surface); border-color: var(--sc-ink); }
+}
+
+/* The lead. */
+.kt-item.is-best {
+  padding-top: var(--sc-6);
+  margin-bottom: var(--sc-2);
+  background: var(--sc-surface);
+  border: 1px solid var(--kt-hair);
+  border-radius: var(--sc-r-lg);
+  box-shadow: var(--sc-e2), var(--sc-edge);
+}
+.kt-item.is-best + .kt-item { border-top-color: transparent; }
+.kt-item.is-best .kt-item__flag {
+  display: inline-flex;
+  position: absolute; top: calc(-1 * var(--sc-3)); left: var(--sc-5);
+  padding: var(--sc-1) var(--sc-3);
+  background: var(--sc-ink); color: var(--sc-canvas);
+  border-radius: var(--sc-r-pill);
+  font-size: var(--sc-t-xs); letter-spacing: var(--sc-track-wide); text-transform: uppercase;
+  line-height: 1.4;
+}
+/* Out of scope for the answers given: stood down by losing its black, not by
+   fading. Every line still clears 4.5:1, and the link is still a link. */
+.kt-item.is-aside .kt-item__name { color: var(--sc-ink-soft); font-weight: 500; }
+.kt-item.is-aside .kt-item__what { color: var(--sc-ink-soft); }
+
+/* =============================================================== the close ==
+   The fog lifts and the lake is back, still. One plate, the list to take
+   away, and the small print inside it rather than trailing off underneath.
+   ========================================================================== */
+.kt-close {
+  min-height: 88svh;
+  display: flex; align-items: center;
+  padding-block: var(--sc-9) var(--sc-8);
+}
+.kt-close__plate {
+  max-width: 40rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background: var(--kt-plate);
+  backdrop-filter: blur(18px) saturate(1.08);
+  border: 1px solid var(--kt-hair);
+  border-radius: var(--sc-r-lg);
+  box-shadow: var(--sc-e2), var(--sc-edge);
+}
+.kt-close__plate h2 { margin: 0 0 var(--sc-4); }
+.kt-close__acts { display: flex; flex-wrap: wrap; gap: var(--sc-3); margin-top: var(--sc-6); }
+.kt-foot {
+  margin-top: var(--sc-7); padding-top: var(--sc-5);
+  border-top: 1px solid var(--kt-hair-2);
+}
+.kt-foot__disclosure { margin: 0 0 var(--sc-3); font-size: var(--sc-t-sm); color: var(--sc-ink-soft); }
+.kt-foot__meta { margin: 0; display: flex; flex-wrap: wrap; gap: var(--sc-2) var(--sc-3); font-size: var(--sc-t-sm); color: var(--sc-ink-soft); }
+
+/* ================================================================= phones ==
+   Its own composition, not the desktop one made smaller: the copy holds the
+   top, the range sits low under it, and everything is one column.
+   ========================================================================== */
+@media (max-width: 820px) {
+  :root { --kt-peek: 4.5rem; }
+  .kt-hero { padding-block: var(--sc-3) calc(var(--kt-peek) + var(--sc-5)); }
+  .kt-hero__copy { margin-top: clamp(1.25rem, 4vh, 2.5rem); }
+  .kt-hero__lede { margin-top: var(--sc-4); font-size: var(--sc-t-base); }
+  .kt-ask { padding: var(--sc-4); gap: var(--sc-4); }
+  .kt-ask__go .kt-btn { width: 100%; }
+  .kt-ask__note { max-width: none; }
+
+  .kt-plate { padding-top: var(--sc-5); }
+  .kt-plate__head { align-items: flex-start; }
+
+  .kt-cat { padding-block: var(--sc-7) var(--sc-5); }
+  .kt-cat__grid { grid-template-columns: 1fr; gap: var(--sc-5); }
+  .kt-cat__head { position: static; }
+  .kt-list { margin-top: var(--sc-3); }
+  .kt-item { grid-template-columns: 1fr; padding-inline: var(--sc-4); }
+  .kt-item__go { justify-self: start; }
+
+  .kt-strip { padding: var(--sc-2) 7.5rem var(--sc-2) var(--sc-4); gap: var(--sc-3); }
+  .kt-strip__mark { display: none; }
+  .kt-motion { top: var(--sc-2); min-height: 2.75rem; }
+  .kt-mark { min-height: 2.75rem; }
+  .kt-close { min-height: 0; padding-block: var(--sc-8) var(--sc-7); }
+}
+
+/* A short phone. The button has to be on the first screen, so the air goes
+   before anything else does. */
+@media (max-width: 820px) and (max-height: 700px) {
+  .kt-hero__copy { margin-top: var(--sc-2); }
+  .kt-hero__title { font-size: 2.05rem; }
+  .kt-hero__lede { margin-top: var(--sc-3); font-size: var(--sc-t-sm); }
+  .kt-ask { margin-top: var(--sc-4); padding: var(--sc-3); gap: var(--sc-3); }
+  .kt-ask__group legend { margin-bottom: var(--sc-2); }
+  .kt-btn--lead { min-height: 3rem; }
+}
+
+/* ============================================================== motion off ==
+   The visitor's switch, and the system setting it defaults from. Everything
+   that travels stops. Nothing that carries meaning is hidden: the lists still
+   reorder, the kit still updates, they just arrive without the journey.
+   ========================================================================== */
+html[data-motion="off"] { scroll-behavior: auto; }
+html[data-motion="off"] [data-sc-in],
+html[data-motion="off"] [data-sc-stagger] > * {
+  opacity: 1 !important; transform: none !important; transition: none !important;
+}
+html[data-motion="off"] .kt-strip { transition: none; }
+html[data-motion="off"] .kt-plate__list.is-writing > li { animation: none; }
+html[data-motion="off"] .kt-item { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .kt-strip { transition: none; }
+  .kt-plate__list.is-writing > li { animation: none; }
+}

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kenzie's Kit · which tools are worth paying for</title>
+<meta name="description" content="Studying, trading, or building something on the side? Answer two questions and get a short list of paid tools picked for you. Every link is an affiliate link.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23e9eff0'/><path d='M4 21 L11 13 L16 18 L22 9 L28 21 Z' fill='%23131c22'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="scrollcraft.css">
+<link rel="stylesheet" href="site.css">
+<!-- Before first paint, so a visitor who has turned motion off never sees it. -->
+<script>
+  (function () {
+    var pref = null;
+    try { pref = localStorage.getItem("kt-motion"); } catch (e) {}
+    var off = pref === "off" ||
+      (pref === null && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    document.documentElement.setAttribute("data-motion", off ? "off" : "on");
+  })();
+</script>
+</head>
+<body>
+
+<span data-sc-progress></span>
+<canvas id="ground" aria-hidden="true"></canvas>
+<div class="sc-grain" aria-hidden="true"></div>
+
+<a class="kt-skip" href="#kit">Skip to your kit</a>
+
+<!-- The off switch. Always on screen, never in the way. -->
+<button class="kt-motion" id="motion" type="button" aria-pressed="true">
+  <span class="kt-motion__dot" aria-hidden="true"></span>
+  <span id="motion-label">Motion on</span>
+</button>
+
+<!-- The chrome: a jump strip that says which list you are standing in. It
+     only appears once the opening questions have left the screen. -->
+<nav class="kt-strip" id="strip" aria-label="Lists">
+  <span class="kt-strip__mark">Kenzie's Kit</span>
+  <ul class="kt-strip__list" id="strip-list"></ul>
+</nav>
+
+<main id="top">
+
+  <!-- 1 · ARRIVAL. Who this is for, what they get, the one thing to do next.
+       Every word is on screen the moment the page is. Only the water moves. -->
+  <section class="kt-hero" data-sc-act="flow" data-sc-drift="#eef3f4" aria-labelledby="hero-title">
+    <div class="sc-wrap kt-hero__inner">
+      <p class="kt-mark" id="hero-mark">Kenzie's Kit</p>
+
+      <div class="kt-hero__copy" id="hero-copy">
+        <h1 class="sc-display kt-hero__title" id="hero-title">Which tools are actually worth paying for?</h1>
+        <p class="sc-lede kt-hero__lede" id="hero-lede"></p>
+      </div>
+
+      <form class="kt-ask" id="ask" aria-describedby="ask-note">
+        <fieldset class="kt-ask__group">
+          <legend>What are you doing?</legend>
+          <div class="kt-ask__row" id="ask-situation"></div>
+        </fieldset>
+        <fieldset class="kt-ask__group">
+          <legend>What can you spend?</legend>
+          <div class="kt-ask__row" id="ask-budget"></div>
+        </fieldset>
+        <div class="kt-ask__go">
+          <a class="kt-btn kt-btn--lead" id="hero-cta" href="#kit">Show my kit</a>
+          <p class="kt-ask__note" id="ask-note"></p>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 2 · YOUR KIT. The result, straight away: one pick from each list, chosen
+       against the two answers. The plate rides up over the edge of the opening
+       screen, so it is already in view before anyone scrolls. -->
+  <section class="kt-kit" id="kit" data-sc-act="flow" data-sc-drift="#f0f5f6" aria-labelledby="h-kit">
+    <div class="sc-wrap">
+      <div class="kt-plate" id="plate">
+        <header class="kt-plate__head">
+          <div>
+            <h2 class="sc-display sc-display--md" id="h-kit">Your kit</h2>
+            <p class="kt-plate__status" id="plate-status" aria-live="polite">One thing from each list.</p>
+          </div>
+          <button class="kt-btn kt-btn--quiet" id="plate-copy" type="button">Copy my kit</button>
+        </header>
+        <ol class="kt-plate__list" id="plate-list"></ol>
+        <p class="kt-plate__note" id="plate-note"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · GROUND RULES. Trust, and the disclosure in full, before the lists. -->
+  <section class="kt-rules" data-sc-act="flow" data-sc-drift="#e8eef0" id="rules" aria-labelledby="h-rules">
+    <div class="sc-wrap" data-sc-in data-sc-stagger="60">
+      <h2 class="sc-display sc-display--md" id="h-rules">How the list is put together</h2>
+      <div class="kt-rules__grid">
+        <p class="sc-body">Six lists, a handful of things on each. Everything here is something I pay for myself and would buy again, which makes for a shorter list than the internet usually gives you.</p>
+        <p class="sc-body">Each pick says what it is, roughly what it costs, and the one reason it is worth the money. If a list has nothing that fits what you told the page, it says so rather than pushing something at you.</p>
+      </div>
+      <div class="kt-note">
+        <span class="sc-label">Disclosure</span>
+        <p class="sc-body" id="rules-disclosure"></p>
+      </div>
+    </div>
+  </section>
+
+  <div id="categories"></div>
+
+  <!-- 4 to 9 · THE LISTS. One shape for all six, because this part of the page
+       is an index and an index that changes shape is harder to use. The pick
+       that suits the answers leads each list and carries the only button in
+       the accent colour. -->
+  <section class="kt-cat" data-sc-act="flow" data-sc-drift="#e6edef" data-kt-cat="trading" aria-labelledby="h-trading">
+    <div class="sc-wrap kt-cat__grid">
+      <header class="kt-cat__head" data-sc-in data-sc-stagger="50">
+        <h2 class="sc-display kt-cat__title" id="h-trading">Trading</h2>
+        <p class="sc-body" data-kt-line="trading"></p>
+        <p class="kt-cat__tip">Start with the charts and the journal. The funded account is worth paying for once you have months of records behind you.</p>
+      </header>
+      <ol class="kt-list" data-kt-list="trading"></ol>
+    </div>
+  </section>
+
+  <section class="kt-cat" data-sc-act="flow" data-sc-drift="#e9eff0" data-kt-cat="study" aria-labelledby="h-study">
+    <div class="sc-wrap kt-cat__grid">
+      <header class="kt-cat__head" data-sc-in data-sc-stagger="50">
+        <h2 class="sc-display kt-cat__title" id="h-study">Study</h2>
+        <p class="sc-body" data-kt-line="study"></p>
+      </header>
+      <ol class="kt-list" data-kt-list="study"></ol>
+    </div>
+  </section>
+
+  <section class="kt-cat" data-sc-act="flow" data-sc-drift="#e6edee" data-kt-cat="software" aria-labelledby="h-software">
+    <div class="sc-wrap kt-cat__grid">
+      <header class="kt-cat__head" data-sc-in data-sc-stagger="50">
+        <h2 class="sc-display kt-cat__title" id="h-software">Software &amp; AI</h2>
+        <p class="sc-body" data-kt-line="software"></p>
+      </header>
+      <ol class="kt-list" data-kt-list="software"></ol>
+    </div>
+  </section>
+
+  <section class="kt-cat" data-sc-act="flow" data-sc-drift="#e8eef0" data-kt-cat="money" aria-labelledby="h-money">
+    <div class="sc-wrap kt-cat__grid">
+      <header class="kt-cat__head" data-sc-in data-sc-stagger="50">
+        <h2 class="sc-display kt-cat__title" id="h-money">Money</h2>
+        <p class="sc-body" data-kt-line="money"></p>
+        <p class="kt-cat__tip">The sign-up bonuses on this list tend to cover a month or two of the subscriptions on the others.</p>
+      </header>
+      <ol class="kt-list" data-kt-list="money"></ol>
+    </div>
+  </section>
+
+  <section class="kt-cat" data-sc-act="flow" data-sc-drift="#e6edef" data-kt-cat="side" aria-labelledby="h-side">
+    <div class="sc-wrap kt-cat__grid">
+      <header class="kt-cat__head" data-sc-in data-sc-stagger="50">
+        <h2 class="sc-display kt-cat__title" id="h-side">Side income</h2>
+        <p class="sc-body" data-kt-line="side"></p>
+      </header>
+      <ol class="kt-list" data-kt-list="side"></ol>
+    </div>
+  </section>
+
+  <section class="kt-cat" data-sc-act="flow" data-sc-drift="#e9eff0" data-kt-cat="desk" aria-labelledby="h-desk">
+    <div class="sc-wrap kt-cat__grid">
+      <header class="kt-cat__head" data-sc-in data-sc-stagger="50">
+        <h2 class="sc-display kt-cat__title" id="h-desk">Desk &amp; gear</h2>
+        <p class="sc-body" data-kt-line="desk"></p>
+        <p class="kt-cat__tip">Bought once. If you only do one of these, make it the chair.</p>
+      </header>
+      <ol class="kt-list" data-kt-list="desk"></ol>
+    </div>
+  </section>
+
+  <!-- 10 · HANDOVER. The fog lifts, the lake is a mirror, and the page gives
+       the list away. It resolves and holds. -->
+  <section class="kt-close" data-sc-act="flow" data-sc-drift="#edf2f3" id="close" aria-labelledby="h-close">
+    <div class="sc-wrap">
+      <div class="kt-close__plate">
+        <h2 class="sc-display sc-display--md" id="h-close">Take it with you</h2>
+        <p class="sc-body">Copy the list into your notes, or open the ones you want now. Nothing here is urgent. The page will be the same tomorrow.</p>
+        <div class="kt-close__acts">
+          <button class="kt-btn kt-btn--ink" id="close-copy" type="button">Copy my kit</button>
+          <a class="kt-btn kt-btn--quiet" href="#kit">Back to my kit</a>
+        </div>
+        <footer class="kt-foot">
+          <p class="kt-foot__disclosure" id="foot-disclosure"></p>
+          <p class="kt-foot__meta">
+            <span id="foot-name">Kenzie's Kit</span>
+            <span aria-hidden="true">·</span>
+            <span>Reviewed <span id="foot-reviewed">September 2026</span></span>
+            <span aria-hidden="true">·</span>
+            <a id="foot-contact" href="#">Get in touch</a>
+          </p>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="picks.js"></script>
+<script src="ground.js"></script>
+<script src="scrollcraft.js"></script>
+<script src="page.js"></script>
+</body>
+</html>
