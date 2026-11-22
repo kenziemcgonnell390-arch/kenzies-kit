@@ -7,10 +7,10 @@ set -e
 cd "$(dirname "$0")"
 SRC=../scrollcraft/builds/stillwater
 for f in index.html page.js picks.js ground.js scrollcraft.js scrollcraft.css site.css; do
-  cp "$SRC/$f" "site/$f"
+  cp "$SRC/$f" "docs/$f"
 done
-touch site/.nojekyll
-git add -A site
+touch docs/.nojekyll
+git add -A docs publish.sh
 if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
 git commit -q -m "Update Kenzie's Kit from stillwater build"
 git push -q
