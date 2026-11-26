@@ -39,7 +39,7 @@
 window.KIT = {
 
   site: {
-    name: "Kenzie's Kit",
+    name: "The Pegboard",
     /* The first screen has three jobs: say who this is for, say what they get,
        and give them one thing to do. The headline is the question they arrived
        with, the tagline names them and the result, and `cta` is the button. */

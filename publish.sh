@@ -1,5 +1,5 @@
 #!/bin/sh
-# Publishes Kenzie's Kit to GitHub Pages.
+# Publishes The Pegboard (was Kenzie's Kit) to GitHub Pages.
 # Source of truth: ../scrollcraft/builds/stillwater (edit picks.js there).
 # This folder is the public repo kenziemcgonnell390-arch/kenzies-kit; only the
 # files the page needs are copied in, so notes and other builds stay private.
@@ -12,6 +12,6 @@ done
 touch docs/.nojekyll
 git add -A docs publish.sh
 if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
-git commit -q -m "Update Kenzie's Kit from stillwater build" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
+git commit -q -m "Update The Pegboard from stillwater build" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 git push -q
 echo "Pushed. Live in a minute at https://kenziemcgonnell390-arch.github.io/kenzies-kit/"
