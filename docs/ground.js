@@ -96,11 +96,11 @@
   var LAYERS = [
     /* seed, roughness, height as a share of the viewport, tint, snowline,
        pointer travel in px, and how much the push-in grows it */
-    { seed: 3,  rough: 0.55, h: 0.46, tint: "#a9bcc4", snow: 0.42, px: 8,  zoom: 0.03, keep: 0.72, peak: 0.70, peakNarrow: 0.30 },
-    { seed: 17, rough: 0.85, h: 0.38, tint: "#7d949e", snow: 0.34, px: 18, zoom: 0.07, keep: 0.4,  peak: 0.90, peakNarrow: 0.78 },
-    { seed: 41, rough: 1.20, h: 0.26, tint: "#56696f", snow: 0.00, px: 30, zoom: 0.13, keep: 0,    peak: 1.06, peakNarrow: 0.05 }
+    { seed: 3,  rough: 0.55, h: 0.46, tint: "#5c4436", snow: 0.42, px: 8,  zoom: 0.03, keep: 0.72, peak: 0.70, peakNarrow: 0.30 },
+    { seed: 17, rough: 0.85, h: 0.38, tint: "#3d2d23", snow: 0.34, px: 18, zoom: 0.07, keep: 0.4,  peak: 0.90, peakNarrow: 0.78 },
+    { seed: 41, rough: 1.20, h: 0.26, tint: "#261c16", snow: 0.00, px: 30, zoom: 0.13, keep: 0,    peak: 1.06, peakNarrow: 0.05 }
   ];
-  var NEAR = { h: 0.34, tint: "#3f525a", px: 54, zoom: 0.27 };
+  var NEAR = { h: 0.34, tint: "#16100c", px: 54, zoom: 0.27 };
   var PAD = 80;
 
   function makeCanvas(w, h) {
@@ -137,7 +137,7 @@
 
     var grad = g.createLinearGradient(0, 0, 0, h);
     grad.addColorStop(0, L.tint);
-    grad.addColorStop(1, mix(L.tint, "#dfe8eb", 0.55));
+    grad.addColorStop(1, mix(L.tint, "#8a5a3c", 0.45));   /* dusk haze low on each range */
     g.fillStyle = grad;
     g.fill();
 
@@ -149,9 +149,9 @@
       g.clip();
       var snowTop = h * (1 - 0.96), snowEnd = h * (1 - L.snow);
       var sg = g.createLinearGradient(0, snowTop, 0, snowEnd);
-      sg.addColorStop(0, "rgba(255,255,255,0.80)");
-      sg.addColorStop(0.55, "rgba(255,255,255,0.38)");
-      sg.addColorStop(1, "rgba(255,255,255,0)");
+      sg.addColorStop(0, "rgba(255,206,168,0.55)");      /* snow holding the last of the light */
+      sg.addColorStop(0.55, "rgba(255,190,150,0.22)");
+      sg.addColorStop(1, "rgba(255,190,150,0)");
       g.fillStyle = sg;
       g.fillRect(0, 0, w, snowEnd);
       g.restore();
@@ -162,7 +162,7 @@
     g.beginPath();
     g.moveTo(pts[0].x, pts[0].y);
     for (var m = 1; m < pts.length; m++) g.lineTo(pts[m].x, pts[m].y);
-    g.strokeStyle = "rgba(255,255,255,0.55)";
+    g.strokeStyle = "rgba(255,170,110,0.38)";   /* ember rim light from the low sun */
     g.lineWidth = 1;
     g.stroke();
 
@@ -219,7 +219,7 @@
     g.closePath();
     var grad = g.createLinearGradient(0, h * 0.5, 0, h);
     grad.addColorStop(0, NEAR.tint);
-    grad.addColorStop(1, mix(NEAR.tint, "#8ea3aa", 0.6));
+    grad.addColorStop(1, mix(NEAR.tint, "#3a2a20", 0.6));
     g.fillStyle = grad;
     g.fill();
 
@@ -230,7 +230,7 @@
       var xn = (tx - PAD) / W;
       var s = smoothstep(start, 1.04, xn);
       var th = H * (0.03 + 0.085 * s) * (0.7 + 0.6 * hash(k * 3.1 + 5));
-      var colour = mix(mix(NEAR.tint, "#8ea3aa", 0.45 * (1 - s)), "#2b3b42", 0.35 * hash(k + 19) * s);
+      var colour = mix(mix(NEAR.tint, "#4a3628", 0.45 * (1 - s)), "#080605", 0.35 * hash(k + 19) * s);
       fir(g, tx, h - shore(xn) + 3, th, th * (0.32 + 0.08 * hash(k + 11)), colour);
       tx += th * (0.15 + 0.2 * hash(k * 1.7 + 2));
       k++;
@@ -261,7 +261,7 @@
     h = h.replace("#", "");
     if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
     var n = parseInt(h, 16);
-    if (isNaN(n)) return [234, 240, 241];
+    if (isNaN(n)) return [11, 9, 8];
     return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
   }
   function rgba(colour, a) {
@@ -305,10 +305,10 @@
   function canvasColour() {
     var v = getComputedStyle(document.documentElement).getPropertyValue("--sc-canvas");
     v = (v || "").trim();
-    return v || "#eaf0f1";
+    return v || "#0b0908";
   }
 
-  var groundColour = "#eaf0f1", colourTick = 0;
+  var groundColour = "#0b0908", colourTick = 0;
 
   function plane(L, horizon, px, py) {
     if (!L.canvas) return;
@@ -335,9 +335,9 @@
 
     /* --- sky ------------------------------------------------------------- */
     var sky = ctx.createLinearGradient(0, 0, 0, horizon);
-    sky.addColorStop(0, mix(groundColour, "#ffffff", 0.55));
-    sky.addColorStop(0.62, groundColour);
-    sky.addColorStop(1, mix(groundColour, "#c9d7db", 0.5));
+    sky.addColorStop(0, groundColour);                               /* dusk: dark overhead */
+    sky.addColorStop(0.55, mix(groundColour, "#3a1c0e", 0.65));
+    sky.addColorStop(1, mix(groundColour, "#c0581f", 0.6));          /* ember on the horizon */
     ctx.fillStyle = sky;
     ctx.fillRect(0, 0, W, horizon + 1);
 
@@ -355,9 +355,9 @@
     /* --- water ----------------------------------------------------------- */
     var waterH = H - horizon;
     var wg = ctx.createLinearGradient(0, horizon, 0, H);
-    wg.addColorStop(0, mix(groundColour, "#9fb3ba", 0.45));
-    wg.addColorStop(0.45, mix(groundColour, "#6f8c96", 0.40));
-    wg.addColorStop(1, mix(groundColour, "#d8e4e7", 0.75));
+    wg.addColorStop(0, mix(groundColour, "#6a3418", 0.55));
+    wg.addColorStop(0.45, mix(groundColour, "#1e140e", 0.5));
+    wg.addColorStop(1, mix(groundColour, "#16100c", 0.6));
     ctx.fillStyle = wg;
     ctx.fillRect(0, horizon, W, waterH + 1);
 
@@ -405,9 +405,9 @@
       var sw = W * (0.22 + 0.10 * Math.abs(phase));
       var sx = W * (0.30 + 0.12 * phase) - sw / 2;
       var lg = ctx.createLinearGradient(sx, 0, sx + sw, 0);
-      lg.addColorStop(0, "rgba(255,255,255,0)");
-      lg.addColorStop(0.5, "rgba(255,255,255," + (0.16 + 0.10 * (1 - still)) + ")");
-      lg.addColorStop(1, "rgba(255,255,255,0)");
+      lg.addColorStop(0, "rgba(255,160,90,0)");
+      lg.addColorStop(0.5, "rgba(255,160,90," + (0.16 + 0.10 * (1 - still)) + ")");
+      lg.addColorStop(1, "rgba(255,160,90,0)");
       ctx.fillStyle = lg;
       ctx.fillRect(sx, sy, sw, 1.5);
     }
@@ -415,9 +415,9 @@
 
     /* The waterline itself: a thin bright edge, and haze sitting on it. */
     var hz = ctx.createLinearGradient(0, horizon - H * 0.09, 0, horizon + H * 0.05);
-    hz.addColorStop(0, "rgba(255,255,255,0)");
-    hz.addColorStop(0.62, "rgba(255,255,255,0.58)");
-    hz.addColorStop(1, "rgba(255,255,255,0)");
+    hz.addColorStop(0, "rgba(224,118,47,0)");
+    hz.addColorStop(0.62, "rgba(224,118,47,0.32)");
+    hz.addColorStop(1, "rgba(224,118,47,0)");
     ctx.fillStyle = hz;
     ctx.fillRect(0, horizon - H * 0.09, W, H * 0.14);
 
@@ -427,8 +427,8 @@
       var drift = moving ? (t * (7 + f * 5)) % (W + 400) - 200 : W * (0.2 + f * 0.25);
       var fg = ctx.createRadialGradient(drift + px * 30 * (f + 1), fy, 0,
                                         drift + px * 30 * (f + 1), fy, W * 0.55);
-      fg.addColorStop(0, "rgba(255,255,255," + (0.16 - f * 0.04) + ")");
-      fg.addColorStop(1, "rgba(255,255,255,0)");
+      fg.addColorStop(0, "rgba(200,150,118," + (0.08 - f * 0.02) + ")");   /* warm smoke-haze */
+      fg.addColorStop(1, "rgba(200,150,118,0)");
       ctx.fillStyle = fg;
       ctx.fillRect(0, fy - H * 0.2, W, H * 0.4);
     }
@@ -439,8 +439,8 @@
       var bx = narrow ? W * 0.5 : comp.x * 0.36, by = comp.y * 0.62;
       var br = Math.max(narrow ? W * 0.8 : comp.x * 0.74, comp.y * 0.95);
       var bank = ctx.createRadialGradient(bx, by, br * 0.2, bx, by, br);
-      bank.addColorStop(0, "rgba(255,255,255," + (0.62 * (1 - heroP)) + ")");
-      bank.addColorStop(1, "rgba(255,255,255,0)");
+      bank.addColorStop(0, "rgba(11,9,8," + (0.7 * (1 - heroP)) + ")");   /* shade behind the light headline */
+      bank.addColorStop(1, "rgba(11,9,8,0)");
       ctx.fillStyle = bank;
       ctx.fillRect(0, 0, W, H);
     }
@@ -448,7 +448,7 @@
     /* The fog coming down: the whole scene eases toward the page ground, which
        is what gives the lists a calm surface to be read on. */
     if (fog > 0.004) {
-      ctx.fillStyle = rgba(mix(groundColour, "#ffffff", 0.3), Math.min(0.94, fog));
+      ctx.fillStyle = rgba(mix(groundColour, "#16110d", 0.3), Math.min(0.94, fog));
       ctx.fillRect(0, 0, W, H);
     }
 
@@ -456,8 +456,8 @@
        corners reading as a flat wash. */
     var vg = ctx.createRadialGradient(W * 0.5, H * 0.46, Math.min(W, H) * 0.35,
                                       W * 0.5, H * 0.46, Math.max(W, H) * 0.78);
-    vg.addColorStop(0, "rgba(255,255,255,0)");
-    vg.addColorStop(1, "rgba(93,116,124," + (0.16 * (1 - fog * 0.7)) + ")");
+    vg.addColorStop(0, "rgba(0,0,0,0)");
+    vg.addColorStop(1, "rgba(0,0,0," + (0.45 * (1 - fog * 0.7)) + ")");
     ctx.fillStyle = vg;
     ctx.fillRect(0, 0, W, H);
   }

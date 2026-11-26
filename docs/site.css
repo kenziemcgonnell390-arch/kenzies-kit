@@ -3,21 +3,22 @@
    scrollcraft.css is the floor and the mechanism; it is never edited.
    The world (ridges, firs, water, fog) is drawn live in ground.js on #ground.
 
-   Three colours, used in fixed proportion:
-     60%  fog      the ground everything sits on
-     30%  slate    type, rules, chips, the strip: the structure
+   Wrightfold's colours (since 26 Nov 2026), used in fixed proportion:
+     60%  hearth   the warm near-black ground everything sits on
+     30%  bone     type, rules, chips, the strip: the structure
      10%  ember    ONLY things a visitor can click to go somewhere
    If something is ember and it is not a button, it is a bug.
+   The lake in ground.js is painted at dusk to match: warm ridges, an ember horizon.
    ========================================================================== */
 
 /* ------------------------------------------------------------- the brand -- */
 :root {
-  --sc-canvas:      #eaf0f1;   /* fog over a cold lake */
-  --sc-surface:     #ffffff;
-  --sc-ink:         #131c22;   /* slate */
-  --sc-ink-soft:    #4a5b63;
-  --sc-accent:      #c2410c;   /* ember, the one warm thing on a cold page */
-  --sc-accent-ink:  #fffaf6;
+  --sc-canvas:      #0b0908;   /* Wrightfold hearth: the lake at dusk */
+  --sc-surface:     #16110d;
+  --sc-ink:         #f2ebe1;   /* bone */
+  --sc-ink-soft:    #a39488;
+  --sc-accent:      #e0762f;   /* Wrightfold ember */
+  --sc-accent-ink:  #140c06;
 
   --sc-font-display: "Archivo", system-ui, sans-serif;
   --sc-font-text:    "Instrument Sans", system-ui, sans-serif;
@@ -25,22 +26,23 @@
   /* Radii: one scale, held everywhere. Water and mist want soft, not round. */
   --sc-r-sm: 6px;  --sc-r-md: 10px;  --sc-r-lg: 16px;
 
-  /* Shadows on a light ground are cool and shallow, or they read as dirt. */
-  --sc-shadow-color: 198 34% 30%;
-  --sc-e1: 0 1px 2px hsl(var(--sc-shadow-color) / 0.08),
-           0 2px 6px -2px hsl(var(--sc-shadow-color) / 0.10);
-  --sc-e2: 0 2px 4px hsl(var(--sc-shadow-color) / 0.08),
-           0 12px 28px -8px hsl(var(--sc-shadow-color) / 0.18);
-  --sc-e3: 0 4px 10px hsl(var(--sc-shadow-color) / 0.10),
-           0 28px 60px -16px hsl(var(--sc-shadow-color) / 0.30);
-  --sc-edge: inset 0 1px 0 hsl(0 0% 100% / 0.9);
+  /* Shadows tinted to the canvas hue, warm rather than blue, as on Wrightfold. */
+  --sc-shadow-color: 24 45% 2%;
+  --sc-e1: 0 1px 2px hsl(var(--sc-shadow-color) / 0.40),
+           0 2px 6px -2px hsl(var(--sc-shadow-color) / 0.45);
+  --sc-e2: 0 2px 4px hsl(var(--sc-shadow-color) / 0.40),
+           0 12px 28px -8px hsl(var(--sc-shadow-color) / 0.60);
+  --sc-e3: 0 4px 10px hsl(var(--sc-shadow-color) / 0.45),
+           0 28px 60px -16px hsl(var(--sc-shadow-color) / 0.75);
+  --sc-edge: inset 0 1px 0 hsl(32 60% 92% / 0.07);
 
   /* Brand-local roles. */
-  --kt-glass:   color-mix(in oklab, #ffffff 78%, transparent);
-  --kt-plate:   color-mix(in oklab, #ffffff 93%, transparent);
+  --kt-glass:   color-mix(in oklab, var(--sc-surface) 80%, transparent);
+  --kt-plate:   color-mix(in oklab, var(--sc-surface) 94%, transparent);
+  --kt-brass:   #c98d4e;       /* Wrightfold's second warm, for hairline details only */
   --kt-hair:    color-mix(in oklab, var(--sc-ink) 11%, transparent);
   --kt-hair-2:  color-mix(in oklab, var(--sc-ink) 24%, transparent);
-  --kt-ember-deep: #a3360a;
+  --kt-ember-deep: #f08a45;     /* hover: ember brightens on a dark page */
   --kt-peek: 6rem;             /* how far the kit rides up over the first screen */
 }
 
@@ -57,8 +59,8 @@ body { overflow-x: clip; }
   display: block;
 }
 
-/* Grain on a light page is a quarter of what a dark page wants. */
-.sc-grain { opacity: 0.022; }
+/* A dark page carries more grain than a light one did. */
+.sc-grain { opacity: 0.06; }
 
 /* Progress is structure, not something to click. */
 [data-sc-progress] { background: var(--sc-ink); opacity: 0.55; }
@@ -258,7 +260,7 @@ body { overflow-x: clip; }
 .kt-chip {
   min-height: 2.5rem;
   padding: var(--sc-2) var(--sc-4);
-  background: color-mix(in oklab, #ffffff 60%, transparent);
+  background: color-mix(in oklab, var(--sc-surface) 70%, transparent);
   border: 1px solid var(--kt-hair-2);
   border-radius: var(--sc-r-pill);
   font-size: var(--sc-t-sm); cursor: pointer;
@@ -268,7 +270,7 @@ body { overflow-x: clip; }
               transform 120ms var(--sc-ease-out);
 }
 @media (hover: hover) and (pointer: fine) {
-  .kt-chip:hover { border-color: var(--sc-ink); background: #ffffff; }
+  .kt-chip:hover { border-color: var(--sc-ink); background: color-mix(in oklab, var(--sc-ink) 8%, var(--sc-surface)); }
 }
 .kt-chip:active { transform: translateY(1px); }
 .kt-chip[aria-pressed="true"] {
